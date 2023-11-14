@@ -6,7 +6,11 @@
  * 8-way demultiplexor:
  * [a, b, c, d, e, f, g, h] = [in, 0, 0, 0, 0, 0, 0, 0] if sel == 000
  *                            [0, in, 0, 0, 0, 0, 0, 0] if sel == 001
- *                            ...
+ *                            [0, 0, in, 0, 0, 0, 0, 0] if sel == 010
+ *                            [0, 0, 0, in, 0, 0, 0, 0] if sel == 011
+ *                            [0, 0, 0, 0, in, 0, 0, 0] if sel == 100
+ *                            [0, 0, 0, 0, 0, in, 0, 0] if sel == 101
+ *                            [0, 0, 0, 0, 0, 0, in, 0] if sel == 110
  *                            [0, 0, 0, 0, 0, 0, 0, in] if sel == 111
  */
 CHIP DMux8Way {
@@ -14,5 +18,37 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    //// Replace this comment with your code.
+    Not(in=sel[0], out=firstPlaceIs0);
+    Not(in=sel[1], out=secondPlaceIs0);
+    Not(in=sel[2], out=thirdPlaceIs0);
+
+    And(a=firstPlaceIs0, b=secondPlaceIs0, out=isaOre);
+    And(a=isaOre, b=thirdPlaceIs0, out=isa);
+    And(a=isa, b=in, out=a);
+
+    And(a=sel[0], b=secondPlaceIs0, out=isbOrf);
+    And(a=isbOrf, b=thirdPlaceIs0, out=isb);
+    And(a=isb, b=in, out=b);
+
+    And(a=firstPlaceIs0, b=sel[1], out=iscOrg);
+    And(a=iscOrg, b=thirdPlaceIs0, out=isc);
+    And(a=isc, b=in, out=c);
+
+    And(a=sel[0], b=sel[1], out=isdOrh);
+    And(a=isdOrh, b=thirdPlaceIs0, out=isd);
+    And(a=isd, b=in, out=d);
+
+    And(a=isaOre, b=sel[2], out=ise);
+    And(a=ise, b=in, out=e);
+
+    And(a=isbOrf, b=sel[2], out=isf);
+    And(a=isf, b=in, out=f);
+
+    And(a=iscOrg, b=sel[2], out=isg);
+    And(a=isg, b=in, out=g);
+
+    And(a=isdOrh, b=sel[2], out=ish);
+    And(a=ish, b=in, out=h);
+
+
 }
