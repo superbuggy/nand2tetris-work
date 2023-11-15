@@ -1,0 +1,58 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way.hdl
+/**
+ * 8-way  multiplexor:
+ * out = a if sel == 00
+ *       b if sel == 01
+ *       c if sel == 10
+ *       d if sel == 11
+ */
+CHIP Mux8Way {
+    IN a, b, c, d, e, f, g, h, sel[3];
+    OUT out;
+    
+    PARTS:
+    Not(in = sel[0], out = firstPlaceIs0);
+    Not(in = sel[1], out = secondPlaceIs0);
+    Not(in = sel[2], out = thirdPlaceIs0);
+
+    And(a = firstPlaceIs0, b = secondPlaceIs0, out = isaOre);
+    And(a = sel[0],        b = secondPlaceIs0, out = isbOrf);
+    And(a = sel[1],        b = firstPlaceIs0,  out = iscOrg);
+    And(a = sel[0],        b = sel[1],         out = isdOrh);
+
+    And(a = isaOre,        b = thirdPlaceIs0,  out = isa);
+    And(a = isbOrf,        b = thirdPlaceIs0,  out = isb);
+    And(a = iscOrg,        b = thirdPlaceIs0,  out = isc);
+    And(a = isdOrh,        b = thirdPlaceIs0,  out = isd);
+    And(a = isaOre,        b = sel[2],         out = ise);
+    And(a = isbOrf,        b = sel[2],         out = isf);
+    And(a = iscOrg,        b = sel[2],         out = isg);
+    And(a = isdOrh,        b = sel[2],         out = ish);
+
+    // And(a = firstPlaceIs0, b = secondPlaceIs0, out = isaOre);
+    // And(a = sel[0],        b = secondPlaceIs0, out = isbOrf);
+    // And(a = sel[1],        b = firstPlaceIs0,  out = iscOrg);
+    // And(a = sel[0],        b = sel[1],         out = isdOrh);
+
+    And(a = a, b = isa, out = aValue);
+    And(a = b, b = isb, out = bValue);
+    And(a = c, b = isc, out = cValue);
+    And(a = d, b = isd, out = dValue);
+    And(a = e, b = ise, out = eValue);
+    And(a = f, b = isf, out = fValue);
+    And(a = g, b = isg, out = gValue);
+    And(a = h, b = ish, out = hValue);
+
+    Or(a = aValue, b = bValue, out = aOrb);
+    Or(a = cValue, b = dValue, out = cOrd);
+    Or(a = eValue, b = fValue, out = eOrf);
+    Or(a = gValue, b = hValue, out = gOrh);
+
+    Or(a = aOrb, b = cOrd, out = oneOfabcd);
+    Or(a = eOrf, b = gOrh, out = oneOfefgh);
+
+    Or(a=oneOfabcd,b=oneOfefgh,out=out);
+}
