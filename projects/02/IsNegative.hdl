@@ -1,0 +1,9 @@
+// File name: projects/02/IsNegative.hdl
+
+CHIP IsNegative {
+  IN in[16];
+  OUT out;
+
+  PARTS:
+  And(a=true, b=in[15], out=out);
+}

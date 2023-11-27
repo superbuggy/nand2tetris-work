@@ -16,6 +16,9 @@
  * zr = (out == 0, 1, 0)
  * ng = (out < 0,  1, 0)
  */
+
+
+
 // Implementation: Manipulates the x and y inputs
 // and operates on the resulting values, as follows:
 // if (zx == 1) sets x = 0        // 16-bit constant
@@ -40,5 +43,21 @@ CHIP ALU {
         ng;      // (out < 0,  1, 0)
 
     PARTS:
-    //// Replace this comment with your code.
+    Mux16(a=x, b=false, sel=zx, out=outx1);
+    Not16(in=outx1, out=notx);
+    Mux16(a=outx1, b=notx, sel=nx, out=outx2);
+    
+    Mux16(a=y, b=false, sel=zy, out=outy1);
+    Not16(in=outy1, out=noty);
+    Mux16(a=outy1, b=noty, sel=ny, out=outy2);
+
+    And16(a=outx2, b=outy2, out=xandy);
+    Add16(a=outx2, b=outy2, out=xysum);
+    Mux16(a=xandy, b=xysum, sel=f, out=outf);
+    Not16(in=outf, out=notf);
+    Mux16(a=outf, b=notf, sel=no, out=final);
+    Or16(a=final, b=final, out=out);
+
+    IsZero(in=final, out=zr); 
+    IsNegative(in=final, out=ng);
 }
